@@ -2,7 +2,6 @@ package com.example.weatherapi.service;
 
 
 import com.example.weatherapi.dto.DayDto;
-import com.example.weatherapi.exception.RestTemplateResponseErrorHandler;
 import com.example.weatherapi.pojo.Forecastday;
 import com.example.weatherapi.pojo.WeatherPojo;
 import com.example.weatherapi.response.MultipleDayWeatherResponseDto;
@@ -28,7 +27,7 @@ public class WeatherService {
 
     }
 
-    public SingleDayWeatherResponseDto getCurrentInfo(String city) throws RestTemplateResponseErrorHandler{
+    public SingleDayWeatherResponseDto getCurrentInfo(String city) {
             String url = "http://api.weatherapi.com/v1/current.json?key=" + appKey + "&q=" + city + "&aqi=no";
             WeatherPojo weatherPojo = restTemplate.getForObject(url, WeatherPojo.class);
             DayDto dayDtoHolder = DayDto.builder()
@@ -38,7 +37,7 @@ public class WeatherService {
             return SingleDayWeatherResponseDto.builder().dayDto(dayDtoHolder).build();
     }
 
-    public MultipleDayWeatherResponseDto getForecastInfo(String city,int days)throws RestTemplateResponseErrorHandler {
+    public MultipleDayWeatherResponseDto getForecastInfo(String city,int days) {
         String url = "http://api.weatherapi.com/v1/forecast.json?key="+appKey+"&q="+city+"&days="+days+"&aqi=no&alerts=no";
         WeatherPojo weatherPojo = restTemplate.getForObject(url,WeatherPojo.class);
         List<DayDto> dayDtoList = new ArrayList<>();
@@ -53,10 +52,10 @@ public class WeatherService {
         }
         return MultipleDayWeatherResponseDto.builder().days(dayDtoList).build();
     }
-    public MultipleDayWeatherResponseDto getWeeklyInfo(String city) throws RestTemplateResponseErrorHandler {
+    public MultipleDayWeatherResponseDto getWeeklyInfo(String city) {
         return getForecastInfo(city,7);
     }
-    public MultipleDayWeatherResponseDto getMonthlyInfo(String city) throws ParseException, RestTemplateResponseErrorHandler {
+    public MultipleDayWeatherResponseDto getMonthlyInfo(String city) throws ParseException {
         MultipleDayWeatherResponseDto multipleDayWeatherResponseDto = getForecastInfo(city,14);
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
         Calendar c = Calendar.getInstance();
@@ -80,6 +79,17 @@ public class WeatherService {
         System.out.println(multipleDayWeatherResponseDto.getDays());
     return multipleDayWeatherResponseDto;
     }
+
+//    public ResponseEntity<SingleDayWeatherResponseDto> deneme(String city) {
+//        String url = "http://api.weatherapi.com/v1/current.json?key=" + appKey + "&q=" + city + "&aqi=no";
+//        ResponseEntity<WeatherPojo> weatherPojo = restTemplate.getForEntity(url, WeatherPojo.class);
+//        DayDto dayDtoHolder = DayDto.builder()
+//                .date(weatherPojo.getBody().getLocation().getLocaltime())
+//                .temp(weatherPojo.getBody().getCurrent().getTempC())
+//                .build();
+//        System.out.println(weatherPojo.getStatusCode());
+//        return new ResponseEntity<>(SingleDayWeatherResponseDto.builder().dayDto(dayDtoHolder).build(),weatherPojo.getStatusCode());
+//    }
 
 
 }
